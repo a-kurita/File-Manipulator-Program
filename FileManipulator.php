@@ -1,4 +1,5 @@
 <?php
+require 'vendor/autoload.php';
 
 function reverese(string $input, string $output) {
     $file = fopen($input, 'r');
@@ -49,6 +50,20 @@ function replaceString(string $input, string $old, string $new) {
     fclose($file);
 }
 
+function markdown(string $input, string $output){
+    $file = fopen($input, 'r');
+    $markdownContent = fread($file, filesize($input));
+    fclose($file);
+
+    $parsedown = new Parsedown();
+    $htmlContent = $parsedown->text($markdownContent);
+
+    $file = fopen($output, 'w');
+    fwrite($file, $htmlContent);
+    fclose($file);
+
+}
+
 if($argc <= 3){
     echo "引数が足りません";
     return;
@@ -61,6 +76,8 @@ if($argv[1] == "reverse"){
     copyText($argv[2], $argv[3]);
 }else if($argv[1] == "duplicate-contents"){
     duplicateContents($argv[2], $argv[3]);
+}else if($argv[1] == "markdown"){
+    markdown($argv[2], $argv[3]);
 }else if($argv[1] == "replace-string"){
     if($argc !== 5){
         echo "引数が足りません";
